@@ -13,7 +13,7 @@ Select the addon on your menu, then you will be good to go.
 # todo
 1. Search
 
-# sources
+# sources todo
 1. ~~daliymotion~~
 2. openload
 3. rapidvideo
