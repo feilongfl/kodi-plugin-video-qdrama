@@ -41,11 +41,10 @@ def genList(url):
     page = Get(url)
     # init regex search
     it = re.finditer("<a href=\"(.*?)\" title=\"([^\"]+?)\">", page, flags=0)
+    itpic = re.finditer("background-image: url\((.*?)\)", page, flags=0)
     # add to list
     for matchObj in it:
-        # print matchObj.group()
-        # print matchObj.group(1),matchObj.group(2)
-        li = xbmcgui.ListItem(matchObj.group(2))
+        li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=itpic.next().group(1))
         url = build_url({'mode': 'video-info', 'path': matchObj.group(1)})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
 
@@ -111,11 +110,13 @@ elif mode[0] == 'video-info':
     page = Get(args['path'][0])
     # init regex search
     it = re.finditer("<li><a href=\"(.*?)\" target=\"_blank\">(.*?)</a></li>", page, flags=0)
+    image = re.search("<meta property=\"og:image\" itemprop=\"image\" content=\"(.*?)\"/>", page, flags=0).group(1)
+    # intro = re.search("<meta name=\"description\" content=\"(.*?)\" />", page, flags=0).group(1)
+    
     # add to list
     for matchObj in it:
-        # print matchObj.group()
-        # print matchObj.group(1),matchObj.group(2)
-        li = xbmcgui.ListItem(matchObj.group(2))
+        li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=image)
+        # li.setInfo("video",{"plotoutline",intro})
         url = build_url({'mode': 'video-list', 'path': matchObj.group(1)})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
 
@@ -129,8 +130,6 @@ elif mode[0] == 'video-list':
 
     # add to list
     for matchObj in it:
-        # print matchObj.group()
-        # print matchObj.group(1),matchObj.group(2)
         li = xbmcgui.ListItem(ttdecode(matchObj.group(3)))
         url = build_url({'mode': ttdecode(matchObj.group(3)), 'path': ttdecode(matchObj.group(4))})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
