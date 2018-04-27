@@ -7,7 +7,6 @@ An addon for KODI to watch qdrama.
 # Source
 All videos come from qsrama.
 
-__Special thanks for project kogumi & you2php__
 # Usage
 Install from zip.
 
