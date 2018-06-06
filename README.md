@@ -1,7 +1,7 @@
 ![https://github.com/feilongfl/kodi-plugin-video-qdrama/raw/master/resources/icon.png](https://github.com/feilongfl/kodi-plugin-video-qdrama/raw/master/resources/icon.png)
 
 # Overview
-An addon for KODI to watch qdrama.
+An addon for KODI to watch qdrama.  
 ![https://i.imgur.com/gR0Ymh2.jpg](https://i.imgur.com/gR0Ymh2.jpg)
 
 # Source
