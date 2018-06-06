@@ -133,6 +133,7 @@ elif mode[0] == 'video-list':
         li = xbmcgui.ListItem(ttdecode(matchObj.group(3)))
         url = build_url({'mode': ttdecode(matchObj.group(3)), 'path': ttdecode(matchObj.group(4))})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
+        # xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),ttdecode(matchObj.group(4).encode('utf-8')))
 
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -151,5 +152,20 @@ elif mode[0] == 'dailymotion':
 
     xbmcplugin.endOfDirectory(addon_handle)
 
+elif mode[0] == 'rapidvideo':
+    # download pages
+    page = Get('https://www.rapidvideo.com/e/' + args['path'][0] + '&q=720p')
+    # init regex search
+    matchObj = re.search("src=\"(https:\/\/.*?mp4)\"", page, flags=0)
+
+    # get video url
+    video_url = matchObj.group(1)
+
+    # add to list
+    li = xbmcgui.ListItem(u'720p'.encode('utf-8'))
+    xbmcplugin.addDirectoryItem(handle=addon_handle, url=video_url, listitem=li)
+
+    xbmcplugin.endOfDirectory(addon_handle)
+
 else:
-    xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),u'is developing'.encode('utf-8'))
+    xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
