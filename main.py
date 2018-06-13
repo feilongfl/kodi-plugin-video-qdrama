@@ -40,13 +40,16 @@ def genList(url):
     # download pages
     page = Get(url)
     # init regex search
-    it = re.finditer("<a href=\"(.*?)\" title=\"([^\"]+?)\">", page, flags=0)
+    it = re.finditer("<a href=\"(.*?)\" title=\"([^\"]+?)\">\n", page, flags=0)
     itpic = re.finditer("background-image: url\((.*?)\)", page, flags=0)
     # add to list
     for matchObj in it:
-        li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=itpic.next().group(1))
-        url = build_url({'mode': 'video-info', 'path': matchObj.group(1)})
-        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
+        try:
+            li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=itpic.next().group(1))
+            url = build_url({'mode': 'video-info', 'path': matchObj.group(1)})
+            xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
+        except BaseException:
+            print("err")
 
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -109,7 +112,7 @@ elif mode[0] == 'video-info':
     # download pages
     page = Get(args['path'][0])
     # init regex search
-    it = re.finditer("<li><a href=\"(.*?)\" target=\"_blank\">(.*?)</a></li>", page, flags=0)
+    it = re.finditer("<li><a href=\"(.*?)\"(?: target=\"_blank\")?>(.*?)<\/a><\/li>", page, flags=0)
     image = re.search("<meta property=\"og:image\" itemprop=\"image\" content=\"(.*?)\"/>", page, flags=0).group(1)
     # intro = re.search("<meta name=\"description\" content=\"(.*?)\" />", page, flags=0).group(1)
     
