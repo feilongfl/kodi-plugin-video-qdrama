@@ -18,7 +18,7 @@ import xbmcplugin
 
 from pprint import pprint
 
-# import 
+# import
 # import resources.lib.lxml.html
 
 #init plugin
@@ -53,7 +53,7 @@ def genList(url):
 
     xbmcplugin.endOfDirectory(addon_handle)
 
-# decode 
+# decode
 def ttdecode(code):
     # print code
     str = ""
@@ -74,7 +74,7 @@ if mode is None:
     li = xbmcgui.ListItem(u'Jp'.encode('utf-8'))
     url = build_url({'mode': 'J-List'})
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
-    
+
     li = xbmcgui.ListItem(u'Kr'.encode('utf-8'))
     url = build_url({'mode': 'K-List'})
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
@@ -115,7 +115,7 @@ elif mode[0] == 'video-info':
     it = re.finditer("<li><a href=\"(.*?)\"(?: target=\"_blank\")?>(.*?)<\/a><\/li>", page, flags=0)
     image = re.search("<meta property=\"og:image\" itemprop=\"image\" content=\"(.*?)\"/>", page, flags=0).group(1)
     # intro = re.search("<meta name=\"description\" content=\"(.*?)\" />", page, flags=0).group(1)
-    
+
     # add to list
     for matchObj in it:
         li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=image)
@@ -133,27 +133,24 @@ elif mode[0] == 'video-list':
 
     # add to list
     for matchObj in it:
-        li = xbmcgui.ListItem(ttdecode(matchObj.group(3)))
-        url = build_url({'mode': ttdecode(matchObj.group(3)), 'path': ttdecode(matchObj.group(4))})
-        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
-        # xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),ttdecode(matchObj.group(4).encode('utf-8')))
+        provider = ttdecode(matchObj.group(3))
+        path= ttdecode(matchObj.group(4))
+        li = xbmcgui.ListItem(provider)
+        url = build_url({'mode': provider, 'path': path})
+        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=False)
 
     xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode[0] == 'dailymotion':
-    # download pages
-    page = Get('http://www.dailymotion.com/video/' + args['path'][0])
-    # init regex search
-    matchObj = re.search("__PLAYER_CONFIG__ = (.*)", page, flags=0)
-
     # get video url
-    video_url = json.loads(matchObj.group(1)[:-1])['metadata']['qualities']['720'][1]['url']
-
-    # add to list
-    li = xbmcgui.ListItem(u'720p'.encode('utf-8'))
-    xbmcplugin.addDirectoryItem(handle=addon_handle, url=video_url, listitem=li)
-
-    xbmcplugin.endOfDirectory(addon_handle)
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    video_url = "plugin://plugin.video.dailymotion_com/?mode=playVideo&url=" + args['path'][0]
+    li = xbmcgui.ListItem(path=video_url)
+    li.setInfo( type="video", infoLabels={ "Path" : video_url } )
+    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
+    playlist.add(url=video_url, listitem=li)
+    xbmc.Player().play(playlist)
 
 elif mode[0] == 'rapidvideo':
     # download pages
@@ -166,9 +163,10 @@ elif mode[0] == 'rapidvideo':
 
     # add to list
     li = xbmcgui.ListItem(u'720p'.encode('utf-8'))
-    xbmcplugin.addDirectoryItem(handle=addon_handle, url=video_url, listitem=li)
-
-    xbmcplugin.endOfDirectory(addon_handle)
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    playlist.add(url=video_url, listitem=li)
+    xbmc.Player().play(playlist)
 
 else:
     xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
