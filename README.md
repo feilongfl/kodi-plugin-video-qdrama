@@ -24,4 +24,5 @@ Select the addon on your menu, then you will be good to go.
 6. cdrama
 7. qq
 8. ~~m3u8~~
+9. youku
 
