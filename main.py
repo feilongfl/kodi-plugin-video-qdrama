@@ -64,6 +64,17 @@ def ttdecode(code):
 
     return str[::-1]
 
+def playUrl(video_url):
+    # get video url
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    # video_url = "plugin://plugin.video.youtube/play/?video_id=" + args['path'][0]
+    li = xbmcgui.ListItem(path=video_url)
+    li.setInfo( type="video", infoLabels={ "Path" : video_url } )
+    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
+    playlist.add(url=video_url, listitem=li)
+    xbmc.Player().play(playlist)
+
 # home page
 mode = args.get('mode', None)
 if mode is None:
@@ -142,42 +153,19 @@ elif mode[0] == 'video-list':
     xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode[0] == 'dailymotion':
-    # get video url
-    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-    playlist.clear()
-    video_url = "plugin://plugin.video.dailymotion_com/?mode=playVideo&url=" + args['path'][0]
-    li = xbmcgui.ListItem(path=video_url)
-    li.setInfo( type="video", infoLabels={ "Path" : video_url } )
-    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
-    playlist.add(url=video_url, listitem=li)
-    xbmc.Player().play(playlist)
-    
+    playUrl("plugin://plugin.video.dailymotion_com/?mode=playVideo&url=" + args['path'][0])
+
 elif mode[0] == 'youtube':
-    # get video url
-    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-    playlist.clear()
-    video_url = "plugin://plugin.video.youtube/play/?video_id=" + args['path'][0]                                                                     
-    li = xbmcgui.ListItem(path=video_url)
-    li.setInfo( type="video", infoLabels={ "Path" : video_url } )
-    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
-    playlist.add(url=video_url, listitem=li)
-    xbmc.Player().play(playlist)
+    playUrl("plugin://plugin.video.youtube/play/?video_id=" + args['path'][0])
 
 elif mode[0] == 'rapidvideo':
     # download pages
     page = Get('https://www.rapidvideo.com/e/' + args['path'][0] + '&q=720p')
     # init regex search
     matchObj = re.search("src=\"(https:\/\/.*?mp4)\"", page, flags=0)
-
     # get video url
-    video_url = matchObj.group(1)
+    playUrl(matchObj.group(1))
 
-    # add to list
-    li = xbmcgui.ListItem(u'720p'.encode('utf-8'))
-    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-    playlist.clear()
-    playlist.add(url=video_url, listitem=li)
-    xbmc.Player().play(playlist)
 
 else:
     xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
