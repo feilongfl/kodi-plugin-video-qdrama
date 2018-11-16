@@ -18,9 +18,6 @@ import xbmcplugin
 
 from pprint import pprint
 
-# import
-# import resources.lib.lxml.html
-
 #init plugin
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
@@ -65,13 +62,10 @@ def ttdecode(code):
     return str[::-1]
 
 def playUrl(video_url):
-    # get video url
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
-    # video_url = "plugin://plugin.video.youtube/play/?video_id=" + args['path'][0]
     li = xbmcgui.ListItem(path=video_url)
     li.setInfo( type="video", infoLabels={ "Path" : video_url } )
-    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
     playlist.add(url=video_url, listitem=li)
     xbmc.Player().play(playlist)
 
@@ -158,6 +152,9 @@ elif mode[0] == 'dailymotion':
 elif mode[0] == 'youtube':
     playUrl("plugin://plugin.video.youtube/play/?video_id=" + args['path'][0])
 
+elif mode[0] == 'm3u8':
+    playUrl(urllib.unquote(urllib.unquote(args['path'][0])))
+
 elif mode[0] == 'rapidvideo':
     # download pages
     page = Get('https://www.rapidvideo.com/e/' + args['path'][0] + '&q=720p')
@@ -166,6 +163,6 @@ elif mode[0] == 'rapidvideo':
     # get video url
     playUrl(matchObj.group(1))
 
-
 else:
     xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
+    print ('unsupport link => ' + args['path'][0].encode('utf-8'))
