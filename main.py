@@ -151,6 +151,17 @@ elif mode[0] == 'dailymotion':
     #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
     playlist.add(url=video_url, listitem=li)
     xbmc.Player().play(playlist)
+    
+elif mode[0] == 'youtube':
+    # get video url
+    playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+    playlist.clear()
+    video_url = "plugin://plugin.video.youtube/play/?video_id=" + args['path'][0]                                                                     
+    li = xbmcgui.ListItem(path=video_url)
+    li.setInfo( type="video", infoLabels={ "Path" : video_url } )
+    #xbmcplugin.setResolvedUrl(addon_handle, True, listitem)
+    playlist.add(url=video_url, listitem=li)
+    xbmc.Player().play(playlist)
 
 elif mode[0] == 'rapidvideo':
     # download pages
