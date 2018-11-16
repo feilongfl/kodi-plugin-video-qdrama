@@ -19,7 +19,9 @@ Select the addon on your menu, then you will be good to go.
 1. ~~daliymotion~~
 2. openload
 3. ~~rapidvideo~~
-4. youtube
+4. ~~youtube~~
 5. bdrama
 6. cdrama
 7. qq
+8. ~~m3u8~~
+
