@@ -8,10 +8,9 @@
 import json
 import re
 import sys
-import urllib
+import urllib.request
 
-import urllib2
-import urlparse
+from urllib.parse import quote,unquote,urlencode,parse_qs
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -21,32 +20,33 @@ from pprint import pprint
 #init plugin
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
-args = urlparse.parse_qs(sys.argv[2][1:])
+args = parse_qs(sys.argv[2][1:])
 
 xbmcplugin.setContent(addon_handle, 'movies')
 
 def build_url(query):
-    return base_url + '?' + urllib.urlencode(query)
+    return base_url + '?' + urlencode(query)
 
 def Get(url):
-    req = urllib2.Request(url)
+    req = urllib.request.Request(url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:5.0)')
-    return urllib2.urlopen(req).read()
+    return urllib.request.urlopen(req).read().decode('utf-8')
 
 def genList(url):
     # download pages
     page = Get(url)
     # init regex search
-    it = re.finditer("<a href=\"(.*?)\" title=\"([^\"]+?)\">\n", page, flags=0)
-    itpic = re.finditer("background-image: url\((.*?)\)", page, flags=0)
+    it = re.finditer(r"<a href=\"(.*?)\" title=\"([^\"]+?)\">\n", page, flags=0)
+    itpic = re.finditer(r"background-image: url\((.*?)\)", page, flags=0)
     # add to list
     for matchObj in it:
-        try:
-            li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=itpic.next().group(1))
+        # try:
+            print(matchObj.group(2))
+            li = xbmcgui.ListItem(matchObj.group(2),thumbnailImage=next(itpic).group(1))
             url = build_url({'mode': 'video-info', 'path': matchObj.group(1)})
             xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
-        except BaseException:
-            print("err")
+        # except BaseException:
+            # print("err")
 
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -153,7 +153,7 @@ elif mode[0] == 'youtube':
     playUrl("plugin://plugin.video.youtube/play/?video_id=" + args['path'][0])
 
 elif mode[0] == 'm3u8':
-    playUrl(urllib.unquote(urllib.unquote(args['path'][0])))
+    playUrl(unquote(unquote(args['path'][0])))
 
 elif mode[0] == 'rapidvideo':
     # download pages
@@ -163,6 +163,10 @@ elif mode[0] == 'rapidvideo':
     # get video url
     playUrl(matchObj.group(1))
 
+elif mode[0] == 'qq':
+    p = args['path'][0].split('-')
+    playUrl("plugin://plugin.common.youget/play/" + quote("https://v.qq.com/x/cover/%s/%s.html" % (p[1],p[0]),safe=''))
+
 else:
-    xbmcgui.Dialog().ok(u'is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
-    print ('unsupport link => ' + args['path'][0].encode('utf-8'))
+    print ('unsupport link => %s' % args['path'][0])
+    xbmcgui.Dialog().ok('is developing'.encode('utf-8'),args['path'][0].encode('utf-8'))
